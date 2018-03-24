@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <SeekBar
+        android:id="@+id/duration_bar"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:progress="0"
+        android:progressDrawable="@drawable/customslider"
+        android:secondaryProgress="0"
+        android:layout_alignParentStart="false"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set New Value"
+        android:id="@+id/set_new_duration"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/current_value"
+        android:layout_alignBottom="@+id/duration_bar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="69dp"
+        android:textSize="42sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

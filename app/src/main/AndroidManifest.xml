@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.cataldo.chris.homeautomationcontroller">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <application android:name="com.cataldo.chris.homeautomationcontroller.GlobalVars"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <!-- Splash screen -->
+        <activity
+            android:name="com.cataldo.chris.homeautomationcontroller.SplashScreen"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <!-- Main activity -->
+        <activity
+            android:name="com.cataldo.chris.homeautomationcontroller.MainActivity"
+            android:label="Device List" >
+        </activity>
+        <activity
+            android:name="com.cataldo.chris.homeautomationcontroller.AdjustCatFeeder"
+            android:label="Adjust Cat Feeder"
+            android:parentActivityName="com.cataldo.chris.homeautomationcontroller.MainActivity" >
+        </activity>
+        <activity
+            android:name="com.cataldo.chris.homeautomationcontroller.SetAwayStatus"
+            android:label="Set Away Status"
+            android:parentActivityName="com.cataldo.chris.homeautomationcontroller.MainActivity" >
+        </activity>
+        <activity
+            android:name="com.cataldo.chris.homeautomationcontroller.ViewSecurityLog"
+            android:label="Security Alerts"
+            android:parentActivityName="com.cataldo.chris.homeautomationcontroller.MainActivity" >
+        </activity>
+        <activity
+            android:name="com.cataldo.chris.homeautomationcontroller.RestartAutomation"
+            android:label="Restart Automation Scripts"
+            android:parentActivityName="com.cataldo.chris.homeautomationcontroller.MainActivity" >
+        </activity>
+        <activity
+            android:name="com.cataldo.chris.homeautomationcontroller.RebootSystem"
+            android:label="Reboot System"
+            android:parentActivityName="com.cataldo.chris.homeautomationcontroller.MainActivity" >
+        </activity>
+    </application>
+
+</manifest>
