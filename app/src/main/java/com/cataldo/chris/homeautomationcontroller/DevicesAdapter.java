@@ -127,7 +127,7 @@ public class DevicesAdapter extends ArrayAdapter<Device> {
         String commandString = "&command=set&device=" + device + "&state=" + state;
         HTTPConnection connection = new HTTPConnection();
         GlobalVars mApp = ((GlobalVars)context.getApplicationContext());
-        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?" + mApp.getAuthCode() + commandString;
+        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
         return connection.getConnection(dataUrl);
     }
 

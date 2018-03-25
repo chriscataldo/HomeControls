@@ -115,12 +115,6 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.optionmenu, menu);
         return true;
     }
-//
-//    public boolean ShowMenuOption(MenuItem item) {
-//        //Menu item pressed
-//        Toast.makeText(this,"Settings menu was pressed.", Toast.LENGTH_SHORT).show();
-//        return true; //Indicated menu press was handled
-//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -131,6 +125,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.set_away_status:
                 setAwayStatus();
+                return true;
+            case R.id.edit_settings:
+                editSettings();
                 return true;
             case R.id.view_security_log:
                 viewSecurityLog();
@@ -154,6 +151,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void setAwayStatus() {
         Intent intent = new Intent(this, SetAwayStatus.class);
+        startActivity(intent);
+    }
+
+    public void editSettings() {
+        Intent intent = new Intent(this, EditSettings.class);
         startActivity(intent);
     }
 

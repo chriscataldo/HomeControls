@@ -90,7 +90,7 @@ public class ViewSecurityLog extends AppCompatActivity {
         String commandString = "&command=getsecurityalerts";
         HTTPConnection connection = new HTTPConnection();
         GlobalVars mApp = ((GlobalVars)getApplicationContext());
-        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?" + mApp.getAuthCode() + commandString;
+        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
         return connection.getConnection(dataUrl);
     }
 

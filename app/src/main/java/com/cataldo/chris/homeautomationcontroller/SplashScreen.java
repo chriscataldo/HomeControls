@@ -1,14 +1,18 @@
 package com.cataldo.chris.homeautomationcontroller;
 
-/**
+/*
  * Created by Chris on 4/21/2016.
  */
 
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.util.Log;
 
 
 public class SplashScreen extends Activity {
@@ -21,10 +25,22 @@ public class SplashScreen extends Activity {
         setContentView(R.layout.activity_splash);
 
         /**
-         * Showing splashscreen while making network calls to download necessary
+         * Showing splash screen while making network calls to download necessary
          * data before launching the app Will use AsyncTask to make http call
          */
-        new PrefetchData().execute();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String domain = preferences.getString("domain", null);
+        String authcode = preferences.getString("authcode", null);
+
+        if(TextUtils.isEmpty(domain) || TextUtils.isEmpty(authcode)) {
+            Intent intent = new Intent(this, EditSettings.class);
+            startActivity(intent);
+        } else {
+            GlobalVars mApp = ((GlobalVars) getApplicationContext());
+            mApp.setDomain(domain);
+            mApp.setAuthcode(authcode);
+            new PrefetchData().execute();
+        }
 
     }
 
@@ -44,9 +60,8 @@ public class SplashScreen extends Activity {
         protected Void doInBackground(Void... arg0) {
             HTTPConnection connection = new HTTPConnection();
             GlobalVars mApp = ((GlobalVars)getApplicationContext());
-            String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?" + mApp.getAuthCode() + "&" + mApp.getInitCommand();
+            String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + "&" + mApp.getInitCommand();
             JSONData = connection.getUrlData(dataUrl);
-
 
             if(JSONData == null) {
                 String errorString = connection.connectionError;

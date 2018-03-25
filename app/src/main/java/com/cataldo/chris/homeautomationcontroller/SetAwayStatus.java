@@ -55,7 +55,7 @@ public class SetAwayStatus extends AppCompatActivity {
         String commandString = "&command=setawaystatus&awaystatus=" + awayStatus;
         HTTPConnection connection = new HTTPConnection();
         GlobalVars mApp = ((GlobalVars)getApplicationContext());
-        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?" + mApp.getAuthCode() + commandString;
+        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
         String jsonString = connection.getConnection(dataUrl);
         if(jsonString != null) {
             try {

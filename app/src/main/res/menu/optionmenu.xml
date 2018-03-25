@@ -4,6 +4,8 @@
         android:title="@string/adjust_cat_feeder"/>
     <item android:id="@+id/set_away_status"
         android:title="@string/set_away_status"/>
+    <item android:id="@+id/edit_settings"
+        android:title="Edit Settings"/>
     <item android:id="@+id/view_security_log"
         android:title="@string/view_security_log"/>
     <item android:id="@+id/restart_x10"

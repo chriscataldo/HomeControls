@@ -6,4 +6,5 @@
     <string name="view_security_log">View Security Log</string>
     <string name="restart_x10">Restart X10</string>
     <string name="reboot_system">Reboot System</string>
+    <string name="title_activity_settings">Settings</string>
 </resources>

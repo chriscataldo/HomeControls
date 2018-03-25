@@ -40,7 +40,7 @@ public class RestartAutomation extends AppCompatActivity {
         String commandString = "&command=restartx10";
         HTTPConnection connection = new HTTPConnection();
         GlobalVars mApp = ((GlobalVars)getApplicationContext());
-        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?" + mApp.getAuthCode() + commandString;
+        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
         String jsonString = connection.getConnection(dataUrl);
         if(jsonString != null) {
             try {
