@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.koushikdutta.ion.Ion;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,27 +41,29 @@ public class RebootSystem extends AppCompatActivity {
 
     private void rebootSystem() {
         String commandString = "&command=rebootsystem";
-        HTTPConnection connection = new HTTPConnection();
         GlobalVars mApp = ((GlobalVars)getApplicationContext());
-        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?" + mApp.getAuthCode() + commandString;
-        String jsonString = connection.getConnection(dataUrl);
-        if(jsonString != null) {
-            try {
-                JSONObject jsonData = new JSONObject(jsonString);
-                String statusError = jsonData.getString("Error");
-                if (statusError.length() > 0) {
-                    showErrorAlert(statusError);
-                } else {
-                    Toast toast = Toast.makeText(this, "System Rebooted", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                    toast.show();
+        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
+        try {
+            String jsonString = Ion.with(RebootSystem.this).load(dataUrl).asString().get();
+            if(jsonString != null) {
+                try {
+                    JSONObject jsonData = new JSONObject(jsonString);
+                    String statusError = jsonData.getString("Error");
+                    if (statusError.length() > 0) {
+                        showErrorAlert(statusError);
+                    } else {
+                        Toast toast = Toast.makeText(this, "System Rebooted", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                        toast.show();
+                    }
+                } catch (JSONException e) {
+                    showErrorAlert("Invalid Json Response");
                 }
-            } catch (JSONException e) {
-                showErrorAlert("Invalid Json Response");
+            } else {
+                showErrorAlert("No Data Returned");
             }
-        } else {
-            String connectionError = mApp.getConnectionError();
-            showErrorAlert(connectionError);
+        } catch(Exception e) {
+            showErrorAlert("Connection Error");
         }
     }
 

@@ -8,11 +8,16 @@ package com.cataldo.chris.homeautomationcontroller;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
+
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
+
+import android.widget.Toast;
+
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 
 
 public class SplashScreen extends Activity {
@@ -39,50 +44,29 @@ public class SplashScreen extends Activity {
             GlobalVars mApp = ((GlobalVars) getApplicationContext());
             mApp.setDomain(domain);
             mApp.setAuthcode(authcode);
-            new PrefetchData().execute();
-        }
 
-    }
-
-    /**
-     * Async Task to make http call
-     */
-    private class PrefetchData extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // before making http calls
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            HTTPConnection connection = new HTTPConnection();
-            GlobalVars mApp = ((GlobalVars)getApplicationContext());
             String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + "&" + mApp.getInitCommand();
-            JSONData = connection.getUrlData(dataUrl);
 
-            if(JSONData == null) {
-                String errorString = connection.connectionError;
-                errorString = errorString + " - dataUrl";
-                mApp.setConnectionError(errorString);
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-
-            // After completing http call
-            // will close this activity and launch main activity
-            Intent i = new Intent(SplashScreen.this, MainActivity.class);
-            i.putExtra("JSONData", JSONData);
-            startActivity(i);
-            // close this activity
-            finish();
+            Ion.with(SplashScreen.this)
+            .load(dataUrl)
+            .asJsonObject()
+            .setCallback(new FutureCallback<JsonObject>() {
+                @Override
+                public void onCompleted(Exception e, JsonObject JSONData) {
+                    if (e == null) {
+                        Intent i = new Intent(SplashScreen.this, MainActivity.class);
+                        i.putExtra("JSONData", JSONData.toString());
+                        startActivity(i);
+                        // close this activity
+                        finish();
+                    } else {
+                        Toast.makeText(
+                            SplashScreen.this,
+                            "Connection Error.",
+                            Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
         }
     }
 }
