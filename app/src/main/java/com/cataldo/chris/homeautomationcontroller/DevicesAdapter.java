@@ -18,11 +18,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.koushikdutta.ion.Ion;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public class DevicesAdapter extends ArrayAdapter<Device> {
     // View lookup cache
@@ -32,7 +35,7 @@ public class DevicesAdapter extends ArrayAdapter<Device> {
         ToggleButton switchSetting;
     }
 
-    Context context;
+    private Context context;
 
     public DevicesAdapter(Context context, ArrayList<Device> devices) {
         super(context, 0, devices);
@@ -102,33 +105,36 @@ public class DevicesAdapter extends ArrayAdapter<Device> {
             @Override
             public void onClick(View v) {
                 String newState = button.isChecked() ? "on" : "off";
-                String jsonString = changeDeviceStatus(device.device, newState);
+                String commandString = "&command=set&device=" + device.device + "&state=" + newState;
+                GlobalVars mApp = ((GlobalVars) context.getApplicationContext());
+                String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
                 try {
-                    JSONObject jsonData = new JSONObject(jsonString);
-                    String statusError = jsonData.getString("Error");
-                    if(statusError.length() > 0) {
-                        showErrorAlert(statusError);
+                    String jsonString = Ion.with(context).load(dataUrl).asString().get();
+                    if (jsonString != null) {
+                        try {
+                            JSONObject jsonData = new JSONObject(jsonString);
+                            String statusError = jsonData.getString("Error");
+                            if (statusError.length() > 0) {
+                                showErrorAlert(statusError);
+                            } else {
+                                device.setDeviceStatus(newState);
+                                Toast toast = Toast.makeText(context, "Confirmed", Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                                toast.show();
+                            }
+                        } catch (JSONException e) {
+                            showErrorAlert("Invalid Response");
+                        }
                     } else {
-                        device.setDeviceStatus(newState);
-                        Toast toast= Toast.makeText(context,"Confirmed", Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                        toast.show();
+                        showErrorAlert("No Data Returned");
                     }
-                } catch (JSONException e) {
-                    showErrorAlert("Invalid Response");
+                } catch(Exception e) {
+                    showErrorAlert("Connection Error");
                 }
             }
         });
 
         return vi;
-    }
-
-    private String changeDeviceStatus(String device, String state) {
-        String commandString = "&command=set&device=" + device + "&state=" + state;
-        HTTPConnection connection = new HTTPConnection();
-        GlobalVars mApp = ((GlobalVars)context.getApplicationContext());
-        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
-        return connection.getConnection(dataUrl);
     }
 
     private void showErrorAlert(String errorMessage) {

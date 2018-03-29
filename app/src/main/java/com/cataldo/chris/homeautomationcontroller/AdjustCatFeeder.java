@@ -1,7 +1,8 @@
 package com.cataldo.chris.homeautomationcontroller;
 
-import android.content.Context;
+
 import android.content.DialogInterface;
+
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,8 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.koushikdutta.ion.Ion;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,27 +79,29 @@ public class AdjustCatFeeder extends AppCompatActivity {
 
     private void setNewDuration(String duration) {
         String commandString = "&command=setfeederduration&duration=" + duration;
-        HTTPConnection connection = new HTTPConnection();
         GlobalVars mApp = ((GlobalVars)getApplicationContext());
         String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
-        String jsonString = connection.getConnection(dataUrl);
-        if(jsonString != null) {
-            try {
-                JSONObject jsonData = new JSONObject(jsonString);
-                String statusError = jsonData.getString("Error");
-                if (statusError.length() > 0) {
-                    showErrorAlert(statusError);
-                } else {
-                    Toast toast = Toast.makeText(this, "Duration Changed", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                    toast.show();
+        try {
+            String jsonString = Ion.with(AdjustCatFeeder.this).load(dataUrl).asString().get();
+            if(jsonString != null) {
+                try {
+                    JSONObject jsonData = new JSONObject(jsonString);
+                    String statusError = jsonData.getString("Error");
+                    if (statusError.length() > 0) {
+                        showErrorAlert(statusError);
+                    } else {
+                        Toast toast = Toast.makeText(this, "Duration Changed", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                        toast.show();
+                    }
+                } catch (JSONException e) {
+                    showErrorAlert("Invalid Json Response");
                 }
-            } catch (JSONException e) {
-                showErrorAlert("Invalid Json Response");
+            } else {
+                showErrorAlert("No Data Returned");
             }
-        } else {
-            String connectionError = mApp.getConnectionError();
-            showErrorAlert(connectionError);
+        } catch(Exception e) {
+            showErrorAlert("Connection Error");
         }
     }
 
@@ -104,29 +109,31 @@ public class AdjustCatFeeder extends AppCompatActivity {
         feederDuration feeder = null;
         feeder = new feederDuration();
         String commandString = "&command=getfeederduration";
-        HTTPConnection connection = new HTTPConnection();
         GlobalVars mApp = ((GlobalVars)getApplicationContext());
         String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
-        String jsonString = connection.getConnection(dataUrl);
-        if(jsonString != null) {
-            try {
-                JSONObject jsonData = new JSONObject(jsonString);
-                String statusError = jsonData.getString("Error");
-                if (statusError.length() > 0) {
-                    showErrorAlert(statusError);
-                } else {
-                    JSONObject resultObject = jsonData.getJSONObject("Data");
-                    feeder.feedermin = resultObject.getString("feedermin");
-                    feeder.feedermax = resultObject.getString("feedermax");
-                    feeder.feedercurrent = resultObject.getString("feedercurrent");
-                    return feeder;
+        try {
+            String jsonString = Ion.with(AdjustCatFeeder.this).load(dataUrl).asString().get();
+            if(jsonString != null) {
+                try {
+                    JSONObject jsonData = new JSONObject(jsonString);
+                    String statusError = jsonData.getString("Error");
+                    if (statusError.length() > 0) {
+                        showErrorAlert(statusError);
+                    } else {
+                        JSONObject resultObject = jsonData.getJSONObject("Data");
+                        feeder.feedermin = resultObject.getString("feedermin");
+                        feeder.feedermax = resultObject.getString("feedermax");
+                        feeder.feedercurrent = resultObject.getString("feedercurrent");
+                        return feeder;
+                    }
+                } catch (JSONException e) {
+                    showErrorAlert("Invalid Json Response");
                 }
-            } catch (JSONException e) {
-                showErrorAlert("Invalid Json Response");
+            } else {
+                showErrorAlert("No Data Returned");
             }
-        } else {
-            String connectionError = mApp.getConnectionError();
-            showErrorAlert(connectionError);
+        } catch(Exception e) {
+            showErrorAlert("Connection Error");
         }
 
         return feeder;
@@ -158,6 +165,5 @@ public class AdjustCatFeeder extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }
-
 
 }
