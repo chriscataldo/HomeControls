@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -79,63 +80,24 @@ public class AdjustCatFeeder extends AppCompatActivity {
 
     private void setNewDuration(String duration) {
         String commandString = "&command=setfeederduration&duration=" + duration;
-        GlobalVars mApp = ((GlobalVars)getApplicationContext());
-        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
-        try {
-            String jsonString = Ion.with(AdjustCatFeeder.this).load(dataUrl).asString().get();
-            if(jsonString != null) {
-                try {
-                    JSONObject jsonData = new JSONObject(jsonString);
-                    String statusError = jsonData.getString("Error");
-                    if (statusError.length() > 0) {
-                        showErrorAlert(statusError);
-                    } else {
-                        Toast toast = Toast.makeText(this, "Duration Changed", Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                        toast.show();
-                    }
-                } catch (JSONException e) {
-                    showErrorAlert("Invalid Json Response");
-                }
-            } else {
-                showErrorAlert("No Data Returned");
-            }
-        } catch(Exception e) {
-            showErrorAlert("Connection Error");
-        }
+        JSONObject data = retrieveDataFromApi(commandString);
+        Toast toast = Toast.makeText(this, "Duration Changed", Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.show();
     }
 
     private feederDuration getCatFeederDuration() {
         feederDuration feeder = null;
         feeder = new feederDuration();
         String commandString = "&command=getfeederduration";
-        GlobalVars mApp = ((GlobalVars)getApplicationContext());
-        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
+        JSONObject data = retrieveDataFromApi(commandString);
         try {
-            String jsonString = Ion.with(AdjustCatFeeder.this).load(dataUrl).asString().get();
-            if(jsonString != null) {
-                try {
-                    JSONObject jsonData = new JSONObject(jsonString);
-                    String statusError = jsonData.getString("Error");
-                    if (statusError.length() > 0) {
-                        showErrorAlert(statusError);
-                    } else {
-                        JSONObject resultObject = jsonData.getJSONObject("Data");
-                        feeder.feedermin = resultObject.getString("feedermin");
-                        feeder.feedermax = resultObject.getString("feedermax");
-                        feeder.feedercurrent = resultObject.getString("feedercurrent");
-                        return feeder;
-                    }
-                } catch (JSONException e) {
-                    showErrorAlert("Invalid Json Response");
-                }
-            } else {
-                showErrorAlert("No Data Returned");
-            }
-        } catch(Exception e) {
-            showErrorAlert("Connection Error");
+            feeder.feedermin = data.getString("feedermin");
+            feeder.feedermax = data.getString("feedermax");
+            feeder.feedercurrent = data.getString("feedercurrent");
+        } catch (JSONException e) {
+            showErrorAlert("Invalid Json Response");
         }
-
         return feeder;
     }
 
@@ -164,6 +126,36 @@ public class AdjustCatFeeder extends AppCompatActivity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
+    }
+
+    private JSONObject retrieveDataFromApi(String commandString) {
+        JSONObject data = new JSONObject();
+        GlobalVars mApp = ((GlobalVars)getApplicationContext());
+        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
+        try {
+            String jsonString = Ion.with(AdjustCatFeeder.this).load(dataUrl).asString().get();
+            if(jsonString != null) {
+                try {
+                    JSONObject jsonData = new JSONObject(jsonString);
+                    String statusError = jsonData.getString("Error");
+                    if (statusError.length() > 0) {
+                        showErrorAlert(statusError);
+                    } else {
+                        JSONObject resultObject = jsonData.getJSONObject("Data");
+                        Log.v("DATA", resultObject.toString());
+                        return jsonData.getJSONObject("Data");
+                    }
+                } catch (JSONException e) {
+                    showErrorAlert("Invalid Json Response");
+                }
+            } else {
+                showErrorAlert("No Data Returned");
+            }
+        } catch(Exception e) {
+            showErrorAlert("Connection Error");
+        }
+
+        return data;
     }
 
 }

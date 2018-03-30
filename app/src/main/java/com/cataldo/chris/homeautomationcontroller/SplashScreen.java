@@ -49,13 +49,13 @@ public class SplashScreen extends Activity {
 
             Ion.with(SplashScreen.this)
             .load(dataUrl)
-            .asJsonObject()
-            .setCallback(new FutureCallback<JsonObject>() {
+            .asString()
+            .setCallback(new FutureCallback<String>() {
                 @Override
-                public void onCompleted(Exception e, JsonObject JSONData) {
+                public void onCompleted(Exception e, String JSONData) {
                     if (e == null) {
                         Intent i = new Intent(SplashScreen.this, MainActivity.class);
-                        i.putExtra("JSONData", JSONData.toString());
+                        i.putExtra("JSONData", JSONData);
                         startActivity(i);
                         // close this activity
                         finish();
