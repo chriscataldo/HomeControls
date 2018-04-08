@@ -1,8 +1,6 @@
 package com.cataldo.chris.homeautomationcontroller;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.Menu;
@@ -10,8 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
-import com.koushikdutta.ion.Ion;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,29 +36,22 @@ public class RestartAutomation extends AppCompatActivity {
 
     private void restartAutomationScripts() {
         String commandString = "&command=restartx10";
-        GlobalVars mApp = ((GlobalVars)getApplicationContext());
-        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
+        ApiConnection connection = new ApiConnection(this);
+        JSONObject data = connection.retrieveData(commandString);
         try {
-            String jsonString = Ion.with(RestartAutomation.this).load(dataUrl).asString().get();
-            if(jsonString != null) {
-                try {
-                    JSONObject jsonData = new JSONObject(jsonString);
-                    String statusError = jsonData.getString("Error");
-                    if (statusError.length() > 0) {
-                        showErrorAlert(statusError);
-                    } else {
-                        Toast toast = Toast.makeText(this, "Automation Restarted", Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                        toast.show();
-                    }
-                } catch (JSONException e) {
-                    showErrorAlert("Invalid Json Response");
-                }
+            String result = data.getString("status");
+            String message = "";
+            if(result.equals("success")) {
+                message = "Automation Restarted.";
             } else {
-                showErrorAlert("No Data Returned");
+                message = "There was a problem.";
             }
-        } catch(Exception e) {
-            showErrorAlert("Connection Error");
+
+            Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+            toast.show();
+        } catch (JSONException e) {
+            connection.showErrorAlert("Invalid Json Response");
         }
     }
 
@@ -80,16 +69,4 @@ public class RestartAutomation extends AppCompatActivity {
         return true;
     }
 
-    private void showErrorAlert(String errorMessage) {
-        AlertDialog alertDialog = new AlertDialog.Builder(RestartAutomation.this).create();
-        alertDialog.setTitle("Connection Error");
-        alertDialog.setMessage(errorMessage);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.show();
-    }
 }

@@ -106,48 +106,30 @@ public class DevicesAdapter extends ArrayAdapter<Device> {
             public void onClick(View v) {
                 String newState = button.isChecked() ? "on" : "off";
                 String commandString = "&command=set&device=" + device.device + "&state=" + newState;
-                GlobalVars mApp = ((GlobalVars) context.getApplicationContext());
-                String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
-                try {
-                    String jsonString = Ion.with(context).load(dataUrl).asString().get();
-                    if (jsonString != null) {
-                        try {
-                            JSONObject jsonData = new JSONObject(jsonString);
-                            String statusError = jsonData.getString("Error");
-                            if (statusError.length() > 0) {
-                                showErrorAlert(statusError);
-                            } else {
-                                device.setDeviceStatus(newState);
-                                Toast toast = Toast.makeText(context, "Confirmed", Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                                toast.show();
-                            }
-                        } catch (JSONException e) {
-                            showErrorAlert("Invalid Response");
+                ApiConnection connection = new ApiConnection(context);
+                JSONObject data = connection.retrieveData(commandString);
+                if(data != null) {
+                    try {
+                        String result = data.getString("status");
+                        String message = "";
+                        if (result.equals("success")) {
+                            message = "Confirmed.";
+                            device.setDeviceStatus(newState);
+                        } else {
+                            message = "There was a problem.";
                         }
-                    } else {
-                        showErrorAlert("No Data Returned");
+
+                        Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                        toast.show();
+                    } catch (JSONException e) {
+                        connection.showErrorAlert("Invalid Json Response");
                     }
-                } catch(Exception e) {
-                    showErrorAlert("Connection Error");
                 }
             }
         });
 
         return vi;
-    }
-
-    private void showErrorAlert(String errorMessage) {
-        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-        alertDialog.setTitle("Alert");
-        alertDialog.setMessage(errorMessage);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.show();
     }
 }
 

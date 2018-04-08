@@ -1,13 +1,11 @@
 package com.cataldo.chris.homeautomationcontroller;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

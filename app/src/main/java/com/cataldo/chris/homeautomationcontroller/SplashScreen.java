@@ -15,7 +15,6 @@ import android.text.TextUtils;
 
 import android.widget.Toast;
 
-import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
@@ -29,10 +28,9 @@ public class SplashScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        /**
-         * Showing splash screen while making network calls to download necessary
-         * data before launching the app Will use AsyncTask to make http call
-         */
+/*        Showing splash screen while making network calls to download necessary
+          data before launching the app*/
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String domain = preferences.getString("domain", null);
         String authcode = preferences.getString("authcode", null);
@@ -49,13 +47,13 @@ public class SplashScreen extends Activity {
 
             Ion.with(SplashScreen.this)
             .load(dataUrl)
-            .asJsonObject()
-            .setCallback(new FutureCallback<JsonObject>() {
+            .asString()
+            .setCallback(new FutureCallback<String>() {
                 @Override
-                public void onCompleted(Exception e, JsonObject JSONData) {
+                public void onCompleted(Exception e, String JSONData) {
                     if (e == null) {
                         Intent i = new Intent(SplashScreen.this, MainActivity.class);
-                        i.putExtra("JSONData", JSONData.toString());
+                        i.putExtra("JSONData", JSONData);
                         startActivity(i);
                         // close this activity
                         finish();

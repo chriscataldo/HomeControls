@@ -1,14 +1,11 @@
 package com.cataldo.chris.homeautomationcontroller;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
-import com.koushikdutta.ion.Ion;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,10 +26,12 @@ public class ViewSecurityLog extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_security_log);
 
-        JSONObject JSONData = getSecurityLogData();
+        String commandString = "&command=getsecurityalerts";
+        ApiConnection connection = new ApiConnection(this);
+        JSONObject data = connection.retrieveData(commandString);
         ArrayList<SecurityAlert> securityAlerts = new ArrayList<SecurityAlert>();
         try {
-            JSONArray resultArray = JSONData.getJSONArray("Data");
+            JSONArray resultArray = data.getJSONArray("securityalerts");
             for (int i = 0; i < resultArray.length(); i++) {
                 SecurityAlert alert = new SecurityAlert();
                 try {
@@ -46,7 +45,7 @@ public class ViewSecurityLog extends AppCompatActivity {
                     String alertTime = alertData.getString("time");
                     alert.setTime(alertTime);
                 } catch (JSONException e) {
-                    showErrorAlert("Invalid Json Response");
+                    connection.showErrorAlert("Invalid Json Response");
                 }
                 securityAlerts.add(alert);
             }
@@ -72,34 +71,6 @@ public class ViewSecurityLog extends AppCompatActivity {
         listView.setAdapter(adapter);
     }
 
-    private JSONObject getSecurityLogData() {
-        String commandString = "&command=getsecurityalerts";
-        GlobalVars mApp = ((GlobalVars)getApplicationContext());
-        String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
-        try {
-            String jsonString = Ion.with(ViewSecurityLog.this).load(dataUrl).asString().get();
-            if(jsonString != null) {
-                try {
-                    JSONObject jsonData = new JSONObject(jsonString);
-                    String statusError = jsonData.getString("Error");
-                    if (statusError.length() > 0) {
-                        showErrorAlert(statusError);
-                    } else {
-                        return jsonData;
-                    }
-                } catch (JSONException e) {
-                    showErrorAlert("Invalid Json Response");
-                }
-            } else {
-                showErrorAlert("No Data Returned");
-            }
-        } catch(Exception e) {
-            showErrorAlert("Connection Error");
-        }
-
-        return null;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -114,19 +85,6 @@ public class ViewSecurityLog extends AppCompatActivity {
         return true;
     }
 
-
-    private void showErrorAlert(String errorMessage) {
-        AlertDialog alertDialog = new AlertDialog.Builder(ViewSecurityLog.this).create();
-        alertDialog.setTitle("Connection Error");
-        alertDialog.setMessage(errorMessage);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.show();
-    }
 }
 
 
