@@ -7,10 +7,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 import org.json.JSONException;
@@ -27,21 +29,55 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private Boolean isActivityRestarting = false;
     private Boolean reloadDataOnResume = false;
+    private GlobalVars mApp;
+   // private SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
+    private Long intitialStartTime;
+    private Integer refreshTimeLimit;
+    private String jsonDataString;
+    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v("DATA", "in onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        try {
+//            mApp = ((GlobalVars) getApplicationContext());
+//        } catch(Exception e) {
+//            Toast toast = Toast.makeText(this, "onCreate mApp error: " + e.toString(), Toast.LENGTH_LONG);
+//            toast.show();
+//            restartApp();
+//        }
 
-        Intent i = getIntent();
-        String JSONData = i.getStringExtra("JSONData");
+        try {
+            if(savedInstanceState != null) {
+                Log.v("DATA", "in savedInstanceState != null");
+                intitialStartTime = savedInstanceState.getLong("intitialStartTime");
+                refreshTimeLimit = savedInstanceState.getInt("refreshTimeLimit");
+                jsonDataString = savedInstanceState.getString("jsonDataString");
+                toast = Toast.makeText(this, "in savedInstanceState != null", Toast.LENGTH_SHORT);
+                toast.show();
+            } else {
+                Log.v("DATA", "in savedInstanceState = null");
+                mApp = ((GlobalVars) getApplicationContext());
+                intitialStartTime = mApp.getInitialStartTime();
+                refreshTimeLimit = mApp.getRefreshTimeLimit();
+                Log.v("DATA", "in savedInstanceState = null - intitialStartTime: " + intitialStartTime);
 
-        if(JSONData != null) {
+                Intent i = getIntent();
+                jsonDataString = i.getStringExtra("jsonDataString");
+            }
+        } catch(Exception e) {
+            Toast toast = Toast.makeText(this, "onCreate mApp error: " + e.toString(), Toast.LENGTH_LONG);
+            toast.show();
+            restartApp();
+        }
 
+        if(jsonDataString != null) {
+            Log.v("DATA", "in jsonDataString != null");
             ArrayList<Device> devices = new ArrayList<Device>();
-
             try {
-                JSONObject jsonData = new JSONObject(JSONData);
+                JSONObject jsonData = new JSONObject(jsonDataString);
                 JSONObject resultObject = jsonData.getJSONObject("Data");
 
                 Iterator<String> iter = resultObject.keys();
@@ -78,34 +114,65 @@ public class MainActivity extends AppCompatActivity {
     //             Log.v("Data","type:" + data.getDeviceType());
     //            Log.v("Data","status:" + data.getDeviceStatus());
     //        }
-
-            // Create the adapter to convert the array to views
-            DevicesAdapter adapter = new DevicesAdapter(this, devices);
-            // Attach the adapter to a ListView
-            ListView listView = (ListView) findViewById(R.id.mainListView);
-            listView.setAdapter(adapter);
+            try {
+                // Create the adapter to convert the array to views
+                DevicesAdapter adapter = new DevicesAdapter(this, devices);
+                // Attach the adapter to a ListView
+                ListView listView = (ListView) findViewById(R.id.mainListView);
+                listView.setAdapter(adapter);
+            } catch (Exception e) {
+                Toast toast = Toast.makeText(this, "adapter error: " + e, Toast.LENGTH_SHORT);
+                toast.show();
+                restartApp();
+            }
 
         } else {
-            GlobalVars mApp = ((GlobalVars)getApplicationContext());
+            Toast toast = Toast.makeText(this, "JSON error", Toast.LENGTH_SHORT);
+            toast.show();
             String connectionError = mApp.getConnectionError();
             showErrorAlert(connectionError);
         }
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        Log.v("DATA", "in onSaveInstanceState");
+        savedInstanceState.putLong("intitialStartTime", mApp.getInitialStartTime());
+        savedInstanceState.putInt("refreshTimeLimit", mApp.getRefreshTimeLimit());
+        savedInstanceState.putString("jsonDataString", jsonDataString);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
     public void onResume() {
+        Log.v("DATA", "in onResume");
         super.onResume();
+        //toast = Toast.makeText(this, "App is resuming", Toast.LENGTH_SHORT);
+        //toast.show();
         Long timeNow = System.currentTimeMillis();
-        GlobalVars mApp = ((GlobalVars)getApplicationContext());
-        Long initialStartTime = mApp.getInitialStartTime();
-        Long elapsedTime = (timeNow - initialStartTime)/1000;
-        if (elapsedTime > mApp.getRefreshTimeLimit()) {
-            mApp.setInitialStartTime(timeNow);
-            Intent intent = new Intent(this, SplashScreen.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+
+        try {
+            int elapsedTime = (int) (timeNow - intitialStartTime)/1000;
+//        String message = elapsedTime + "";
+//        toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+//        toast.show();
+            if (elapsedTime > refreshTimeLimit) {
+                Log.v("DATA", "in onResume try");
+                restartApp();
+            }
+        } catch(Exception e) {
+            Log.v("DATA", "in onResume catch");
+            toast = Toast.makeText(this, "onResume Error: " + e.toString(), Toast.LENGTH_SHORT);
+            toast.show();
+            restartApp();
         }
+
+
     }
 
     @Override
@@ -187,7 +254,25 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    private void restartApp() {
+        Log.v("DATA", "in restartApp");
+        Toast toast = Toast.makeText(this, "in restartApp", Toast.LENGTH_SHORT);
+        toast.show();
 
+        Intent i = getBaseContext().getPackageManager().
+                getLaunchIntentForPackage(getBaseContext().getPackageName());
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+
+
+//        Intent intent = new Intent(getApplicationContext(), SplashScreen.class);
+//        int mPendingIntentId = 9999;
+//        PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+//        AlarmManager mgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+//        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+//        System.exit(0);
+    }
 }
 
 

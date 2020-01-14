@@ -37,11 +37,13 @@ public class SplashScreen extends Activity {
 
         if(TextUtils.isEmpty(domain) || TextUtils.isEmpty(authcode)) {
             Intent intent = new Intent(this, EditSettings.class);
+            intent.putExtra("initialRun","true");
             startActivity(intent);
         } else {
             GlobalVars mApp = ((GlobalVars) getApplicationContext());
             mApp.setDomain(domain);
             mApp.setAuthcode(authcode);
+            mApp.setInitialStartTime();
 
             String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + "&" + mApp.getInitCommand();
 
@@ -53,7 +55,7 @@ public class SplashScreen extends Activity {
                 public void onCompleted(Exception e, String JSONData) {
                     if (e == null) {
                         Intent i = new Intent(SplashScreen.this, MainActivity.class);
-                        i.putExtra("JSONData", JSONData);
+                        i.putExtra("jsonDataString", JSONData);
                         startActivity(i);
                         // close this activity
                         finish();

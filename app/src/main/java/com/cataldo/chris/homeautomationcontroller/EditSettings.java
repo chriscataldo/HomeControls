@@ -1,5 +1,6 @@
 package com.cataldo.chris.homeautomationcontroller;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -38,7 +39,14 @@ public class EditSettings extends AppCompatActivity {
         editor.putString("domain", domainField.getText().toString());
         editor.putString("authcode", authcodeField.getText().toString());
         editor.apply();
-        finish();
+        Intent intent = getIntent();
+        String initialRun = intent.getStringExtra("initialRun");
+        if(initialRun != null) {
+            Intent newIntent = new Intent(this, SplashScreen.class);
+            startActivity(newIntent);
+        } else {
+            finish();
+        }
     }
 
 

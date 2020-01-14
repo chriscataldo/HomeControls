@@ -42,8 +42,9 @@ public class GlobalVars extends Application {
     public Long getInitialStartTime() {
         return initialStartTime;
     }
-    public void setInitialStartTime(Long time) {
-        initialStartTime = time;
+
+    public void setInitialStartTime() {
+        this.initialStartTime = System.currentTimeMillis();
     }
 
     public String getConnectionError() {
@@ -53,10 +54,10 @@ public class GlobalVars extends Application {
         connectionError = str;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Long tsLong = System.currentTimeMillis();
-        this.setInitialStartTime(tsLong);
-    }
+//    @Override
+//    public void onCreate() {
+//        super.onCreate();
+//    }
+
+
 }
