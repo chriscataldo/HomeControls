@@ -6,9 +6,9 @@ package com.cataldo.chris.homeautomationcontroller;
 
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
+
+import androidx.appcompat.app.AlertDialog;
+
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,14 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.koushikdutta.ion.Ion;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 public class DevicesAdapter extends ArrayAdapter<Device> {
     // View lookup cache

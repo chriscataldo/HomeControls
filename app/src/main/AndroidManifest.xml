@@ -29,13 +29,16 @@
         <!-- Main activity -->
         <activity
             android:name=".MainActivity"
-            android:label="Device List"></activity>
+            android:screenOrientation="portrait"
+            android:label="Device List" />
         <activity
             android:name=".AdjustCatFeeder"
+            android:screenOrientation="portrait"
             android:label="Adjust Cat Feeder"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".SetAwayStatus"
+            android:screenOrientation="portrait"
             android:label="Set Away Status"
             android:parentActivityName=".MainActivity"></activity>
         <activity

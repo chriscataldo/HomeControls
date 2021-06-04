@@ -3,8 +3,8 @@ package com.cataldo.chris.homeautomationcontroller;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
         Log.v("DATA", "in onSaveInstanceState");
         savedInstanceState.putLong("intitialStartTime", mApp.getInitialStartTime());
         savedInstanceState.putInt("refreshTimeLimit", mApp.getRefreshTimeLimit());
