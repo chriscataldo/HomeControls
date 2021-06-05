@@ -32,7 +32,7 @@ public class DevicesAdapter extends ArrayAdapter<Device> {
         ToggleButton switchSetting;
     }
 
-    private Context context;
+    private final Context context;
 
     public DevicesAdapter(Context context, ArrayList<Device> devices) {
         super(context, 0, devices);
@@ -65,7 +65,7 @@ public class DevicesAdapter extends ArrayAdapter<Device> {
 
         // Get the data item for this position
         final Device device = getItem(position);
-        Boolean containsHeader = false;
+        boolean containsHeader = false;
         if(position == 0) containsHeader = true;
         if(position > 0) {
             Device deviceLast = getItem(position-1);
@@ -95,7 +95,7 @@ public class DevicesAdapter extends ArrayAdapter<Device> {
         }
 
 
-        /** Getting the toggle button corresponding to the clicked item */
+        /* Getting the toggle button corresponding to the clicked item */
         final ToggleButton button = holder.switchSetting;
 
         button.setOnClickListener(new View.OnClickListener() {

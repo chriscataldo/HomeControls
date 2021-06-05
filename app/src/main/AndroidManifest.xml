@@ -40,23 +40,27 @@
             android:name=".SetAwayStatus"
             android:screenOrientation="portrait"
             android:label="Set Away Status"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".ViewSecurityLog"
             android:label="Security Alerts"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".RestartAutomation"
             android:label="Restart Automation Scripts"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".RebootSystem"
             android:label="Reboot System"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".About"
+            android:label="About"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".EditSettings"
             android:label="Edit Settings"
-            android:parentActivityName=".SplashScreen"></activity>
+            android:parentActivityName=".SplashScreen" />
     </application>
 
 </manifest>

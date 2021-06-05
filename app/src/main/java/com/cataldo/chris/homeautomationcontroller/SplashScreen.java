@@ -54,16 +54,18 @@ public class SplashScreen extends Activity {
                 @Override
                 public void onCompleted(Exception e, String JSONData) {
                     if (e == null) {
-                        Intent i = new Intent(SplashScreen.this, MainActivity.class);
-                        i.putExtra("jsonDataString", JSONData);
-                        startActivity(i);
-                        // close this activity
-                        finish();
+                        Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                        intent.putExtra("jsonDataString", JSONData);
+                        startActivity(intent);
+                        finish(); // close this activity
                     } else {
                         Toast.makeText(
                             SplashScreen.this,
-                            "Connection Error.",
-                            Toast.LENGTH_LONG).show();
+                            "Connection Error - " + e.toString(),
+                        Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(SplashScreen.this, EditSettings.class);
+                        startActivity(intent);
+                        finish(); // close this activity
                     }
                 }
             });

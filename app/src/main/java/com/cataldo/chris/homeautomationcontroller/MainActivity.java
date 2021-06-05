@@ -27,8 +27,8 @@ import java.util.Iterator;
 public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
-    private Boolean isActivityRestarting = false;
-    private Boolean reloadDataOnResume = false;
+    private final Boolean isActivityRestarting = false;
+    private final Boolean reloadDataOnResume = false;
     private GlobalVars mApp;
    // private SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
     private Long intitialStartTime;
@@ -64,8 +64,8 @@ public class MainActivity extends AppCompatActivity {
                 refreshTimeLimit = mApp.getRefreshTimeLimit();
                 Log.v("DATA", "in savedInstanceState = null - intitialStartTime: " + intitialStartTime);
 
-                Intent i = getIntent();
-                jsonDataString = i.getStringExtra("jsonDataString");
+                Intent intent = getIntent();
+                jsonDataString = intent.getStringExtra("jsonDataString");
             }
         } catch(Exception e) {
             Toast toast = Toast.makeText(this, "onCreate mApp error: " + e.toString(), Toast.LENGTH_LONG);
@@ -188,9 +188,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.adjust_cat_feeder:
-                adjustCatFeeder();
-                return true;
+//            case R.id.adjust_cat_feeder:
+//                adjustCatFeeder();
+//                return true;
             case R.id.set_away_status:
                 setAwayStatus();
                 return true;
@@ -200,8 +200,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.view_security_log:
                 viewSecurityLog();
                 return true;
-            case R.id.restart_x10:
-                restartX10();
+            case R.id.about:
+                showAbout();
                 return true;
             case R.id.reboot_system:
                 rebootSystem();
@@ -212,10 +212,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void adjustCatFeeder() {
-        Intent intent = new Intent(this, AdjustCatFeeder.class);
-        startActivity(intent);
-    }
+
+
+//    public void adjustCatFeeder() {
+//        Intent intent = new Intent(this, AdjustCatFeeder.class);
+//        startActivity(intent);
+//    }
 
     public void setAwayStatus() {
         Intent intent = new Intent(this, SetAwayStatus.class);
@@ -232,10 +234,15 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void restartX10() {
-        Intent intent = new Intent(this, RestartAutomation.class);
+    private void showAbout() {
+        Intent intent = new Intent(this, About.class);
         startActivity(intent);
     }
+
+//    public void restartX10() {
+//        Intent intent = new Intent(this, RestartAutomation.class);
+//        startActivity(intent);
+//    }
 
     public void rebootSystem() {
         Intent intent = new Intent(this, RebootSystem.class);
@@ -257,14 +264,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void restartApp() {
         Log.v("DATA", "in restartApp");
-        Toast toast = Toast.makeText(this, "in restartApp", Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(this, "Re-loading Data", Toast.LENGTH_SHORT);
         toast.show();
 
-        Intent i = getBaseContext().getPackageManager().
+        Intent intent = getBaseContext().getPackageManager().
                 getLaunchIntentForPackage(getBaseContext().getPackageName());
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
 
 
 //        Intent intent = new Intent(getApplicationContext(), SplashScreen.class);

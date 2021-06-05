@@ -32,12 +32,9 @@ public class SetAwayStatus extends AppCompatActivity {
         Integer currentAwayStatus = getAwayStatus();
 
         // set the switch to the correct position
-        if(currentAwayStatus == 1) {
-            switchSetting.setChecked(true);
-        } else {
-            switchSetting.setChecked(false);
-        }
-        /** Getting the toggle button corresponding to the clicked item */
+        switchSetting.setChecked(currentAwayStatus == 1);
+
+        /* Getting the toggle button corresponding to the clicked item */
         final ToggleButton button = switchSetting;
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +68,7 @@ public class SetAwayStatus extends AppCompatActivity {
     }
 
     private Integer getAwayStatus() {
-        Integer currentawaystatus = 0;
+        int currentawaystatus = 0;
         String commandString = "&command=getawaystatus";
         ApiConnection connection = new ApiConnection(this);
         JSONObject data = connection.retrieveData(commandString);
@@ -85,10 +82,9 @@ public class SetAwayStatus extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

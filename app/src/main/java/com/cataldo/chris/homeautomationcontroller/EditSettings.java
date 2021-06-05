@@ -17,36 +17,34 @@ public class EditSettings extends AppCompatActivity {
         setContentView(R.layout.edit_settings);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String domain = preferences.getString("domain", null);
-        String authcode = preferences.getString("authcode", null);
+        String currentDomain = preferences.getString("domain", null);
+        String currentAuthcode = preferences.getString("authcode", null);
 
-        if(!TextUtils.isEmpty(domain)) {
+        if(!TextUtils.isEmpty(currentDomain)) {
             EditText domainField = (EditText) findViewById(R.id.domain);
-            domainField.setText(domain);
+            domainField.setText(currentDomain);
         }
 
-        if(!TextUtils.isEmpty(authcode)) {
+        if(!TextUtils.isEmpty(currentAuthcode)) {
             EditText authcodeField = (EditText) findViewById(R.id.authcode);
-            authcodeField.setText(authcode);
+            authcodeField.setText(currentAuthcode);
         }
     }
 
     public void saveSettings(View view) {
         EditText domainField = (EditText) findViewById(R.id.domain);
         EditText authcodeField = (EditText) findViewById(R.id.authcode);
+        String newDomain = domainField.getText().toString();
+        String newAuthcode = authcodeField.getText().toString();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("domain", domainField.getText().toString());
-        editor.putString("authcode", authcodeField.getText().toString());
+        editor.putString("domain", newDomain);
+        editor.putString("authcode", newAuthcode);
         editor.apply();
-        Intent intent = getIntent();
-        String initialRun = intent.getStringExtra("initialRun");
-        if(initialRun != null) {
-            Intent newIntent = new Intent(this, SplashScreen.class);
-            startActivity(newIntent);
-        } else {
-            finish();
-        }
+
+        Intent newIntent = new Intent(this, SplashScreen.class);
+        startActivity(newIntent);
+        finish();
     }
 
 

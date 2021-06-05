@@ -58,7 +58,7 @@ public class SecurityAlertsAdapter extends ArrayAdapter<SecurityAlert> {
 
         // Get the data item for this position
         final SecurityAlert alert = getItem(position);
-        Boolean containsHeader = false;
+        boolean containsHeader = false;
         if(position == 0) containsHeader = true;
         if(position > 0) {
             SecurityAlert alertLast = getItem(position-1);
