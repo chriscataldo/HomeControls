@@ -32,24 +32,24 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.v("DATA", "in onCreate");
+        Log.v("DBG", "in onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         try {
             if(savedInstanceState != null) {
-                Log.v("DATA", "in savedInstanceState != null");
+                Log.v("DBG", "in savedInstanceState != null");
                 intitialStartTime = savedInstanceState.getLong("intitialStartTime");
                 refreshTimeLimit = savedInstanceState.getInt("refreshTimeLimit");
                 jsonDataString = savedInstanceState.getString("jsonDataString");
                 toast = Toast.makeText(this, "in savedInstanceState != null", Toast.LENGTH_SHORT);
                 toast.show();
             } else {
-                Log.v("DATA", "in savedInstanceState = null");
+                Log.v("DBG", "in savedInstanceState = null");
                 mApp = ((GlobalVars) getApplicationContext());
                 intitialStartTime = mApp.getInitialStartTime();
                 refreshTimeLimit = mApp.getRefreshTimeLimit();
-                Log.v("DATA", "in savedInstanceState = null - intitialStartTime: " + intitialStartTime);
+                Log.v("DBG", "in savedInstanceState = null - intitialStartTime: " + intitialStartTime);
 
                 Intent intent = getIntent();
                 jsonDataString = intent.getStringExtra("jsonDataString");
@@ -61,20 +61,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(jsonDataString != null) {
-            Log.v("DATA", "in jsonDataString != null");
+            Log.v("DBG", "in jsonDataString != null");
             ArrayList<Device> devices = new ArrayList<>();
             try {
                 JSONObject jsonData = new JSONObject(jsonDataString);
-                JSONObject resultObject = jsonData.getJSONObject("Data");
+//                JSONObject resultObject = jsonData.getJSONObject("Data");
 
-                Iterator<String> iter = resultObject.keys();
+                Iterator<String> iter = jsonData.keys();
                 while (iter.hasNext()) {
                     String key = iter.next();
                     Device device = new Device();
                     device.setDevice(key);
 
                     try {
-                        JSONObject deviceData = resultObject.getJSONObject(key);
+                        JSONObject deviceData = jsonData.getJSONObject(key);
                         String deviceDataName = deviceData.getString("name");
                         device.setDeviceName(deviceDataName);
                         String deviceDataType = deviceData.getString("type");
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        Log.v("DATA", "in onSaveInstanceState");
+        Log.v("DBG", "in onSaveInstanceState");
         savedInstanceState.putLong("intitialStartTime", mApp.getInitialStartTime());
         savedInstanceState.putInt("refreshTimeLimit", mApp.getRefreshTimeLimit());
         savedInstanceState.putString("jsonDataString", jsonDataString);
@@ -131,18 +131,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onResume() {
-        Log.v("DATA", "in onResume");
+        Log.v("DBG", "in onResume");
         super.onResume();
         Long timeNow = System.currentTimeMillis();
 
         try {
             int elapsedTime = (int) (timeNow - intitialStartTime)/1000;
             if (elapsedTime > refreshTimeLimit) {
-                Log.v("DATA", "in onResume try");
+                Log.v("DBG", "in onResume try");
                 restartApp();
             }
         } catch(Exception e) {
-            Log.v("DATA", "in onResume catch");
+            Log.v("DBG", "in onResume catch");
             toast = Toast.makeText(this, "onResume Error: " + e, Toast.LENGTH_SHORT);
             toast.show();
             restartApp();
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void restartApp() {
-        Log.v("DATA", "in restartApp");
+        Log.v("DBG", "in restartApp");
         Toast toast = Toast.makeText(this, "Re-loading Data", Toast.LENGTH_SHORT);
         toast.show();
 

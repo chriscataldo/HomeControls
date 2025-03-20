@@ -25,12 +25,7 @@ public class RestartAutomation extends AppCompatActivity {
         final Button restartButton = findViewById(R.id.restart_button);
 
         if (restartButton != null) {
-            restartButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    restartAutomationScripts();
-                }
-            });
+            restartButton.setOnClickListener(v -> restartAutomationScripts());
         }
     }
 

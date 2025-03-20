@@ -26,12 +26,7 @@ public class RebootSystem extends AppCompatActivity {
         final Button rebootButton = findViewById(R.id.reboot_button);
 
         if (rebootButton != null) {
-            rebootButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    rebootSystem();
-                }
-            });
+            rebootButton.setOnClickListener(v -> rebootSystem());
         }
     }
 

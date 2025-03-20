@@ -8,6 +8,7 @@ package com.cataldo.chris.homeautomationcontroller;
 import android.content.Context;
 
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,28 +104,62 @@ public class DevicesAdapter extends ArrayAdapter<Device> {
                 String newState = button.isChecked() ? "on" : "off";
                 String commandString = "&command=set&device=" + device.device + "&state=" + newState;
                 ApiConnection connection = new ApiConnection(context);
-                JSONObject data = connection.retrieveData(commandString);
-                if(data != null) {
-                    try {
-                        String result = data.getString("status");
-                        String message;
-                        if (result.equals("success")) {
-                            message = "Confirmed.";
-                            device.setDeviceStatus(newState);
-                        } else {
-                            message = "There was a problem.";
-                        }
+                updateStatus(connection, device, newState);
 
-                        Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                        toast.show();
-                    } catch (JSONException e) {
-                        connection.showErrorAlert("Invalid Json Response");
-                    }
-                }
+
+//                JSONObject data = connection.retrieveData(commandString);
+//                if(data != null) {
+//                    try {
+//                        String result = data.getString("status");
+//                        String message;
+//                        if (result.equals("success")) {
+//                            message = "Confirmed.";
+//                            device.setDeviceStatus(newState);
+//                        } else {
+//                            message = "There was a problem.";
+//                        }
+//
+//                        Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
+//                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+//                        toast.show();
+//                    } catch (JSONException e) {
+//                        connection.showErrorAlert("Invalid Json Response");
+//                    }
+//                }
             }
         });
 
         return vi;
+    }
+
+    private void updateStatus(ApiConnection connection, Device device, String newState) {
+        new Thread(new Runnable() {
+            String message;
+            @Override
+            public void run() {
+                String commandString = "&command=set&device=" + device.device + "&state=" + newState;
+                JSONObject data = connection.retrieveData(commandString);
+                try {
+                    String result = data.getString("status");
+                    if (result.equals("success")) {
+                        message = "Confirmed.";
+                        device.setDeviceStatus(newState);
+                    } else {
+                        message = "There was a problem.";
+                    }
+                } catch (JSONException e) {
+                    connection.showErrorAlert("Invalid Json Response");
+                }
+
+                ((AppCompatActivity) context).runOnUiThread(new Runnable() {
+                    public void run() {
+                        Log.v("DBG", "in onPostExecute");
+                        Toast toast = Toast.makeText(DevicesAdapter.this.context, message, Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                        toast.show();
+                    }
+                });
+            }
+        }).start();
     }
 }

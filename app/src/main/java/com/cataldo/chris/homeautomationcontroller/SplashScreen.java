@@ -8,18 +8,18 @@ package com.cataldo.chris.homeautomationcontroller;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-
+import android.util.Log;
 import android.widget.Toast;
 
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
+import org.json.JSONObject;
 
 
 public class SplashScreen extends Activity {
+
+    ApiConnection connection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,30 +43,70 @@ public class SplashScreen extends Activity {
             mApp.setAuthcode(authcode);
             mApp.setInitialStartTime();
 
-            String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + "&" + mApp.getInitCommand();
+            connection = new ApiConnection(this);
+//            String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + "&" + mApp.getInitCommand();
+            String commandString = "&" + mApp.getInitCommand();
+            Log.v("DBG", "commandString: " + commandString);
+            getInitialData(connection, commandString);
 
-            Ion.with(SplashScreen.this)
-            .load(dataUrl)
-            .asString()
-            .setCallback(new FutureCallback<String>() {
-                @Override
-                public void onCompleted(Exception e, String JSONData) {
-                    if (e == null) {
-                        Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-                        intent.putExtra("jsonDataString", JSONData);
-                        startActivity(intent);
-                        finish(); // close this activity
-                    } else {
-                        Toast.makeText(
-                            SplashScreen.this,
-                            "Connection Error - " + e,
-                        Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(SplashScreen.this, EditSettings.class);
-                        startActivity(intent);
-                        finish(); // close this activity
-                    }
-                }
-            });
+
+
+//            Ion.with(SplashScreen.this)
+//            .load(dataUrl)
+//            .asString()
+//            .setCallback(new FutureCallback<String>() {
+//                @Override
+//                public void onCompleted(Exception e, String JSONData) {
+//                    if (e == null) {
+//                        Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+//                        intent.putExtra("jsonDataString", JSONData);
+//                        startActivity(intent);
+//                        finish(); // close this activity
+//                    } else {
+//                        Toast.makeText(
+//                            SplashScreen.this,
+//                            "Connection Error - " + e,
+//                        Toast.LENGTH_LONG).show();
+//                        Intent intent = new Intent(SplashScreen.this, EditSettings.class);
+//                        startActivity(intent);
+//                        finish(); // close this activity
+//                    }
+//                }
+//            });
         }
+    }
+
+    private void getInitialData(ApiConnection connection, String commandString) {
+        new Thread(new Runnable() {
+            String message;
+            JSONObject data;
+
+            Exception error;
+            @Override
+            public void run() {
+                try {
+                    data = connection.retrieveData(commandString);
+                    Log.v("DBG", "data: " + data);
+                } catch (Exception e) {
+                    error = e;
+                }
+
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        if(error != null) {
+                            Toast.makeText(SplashScreen.this,"Connection Error - " + error, Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(SplashScreen.this, EditSettings.class);
+                            startActivity(intent);
+                            finish(); // close this activity
+                        } else {
+                            Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                            intent.putExtra("jsonDataString", data.toString());
+                            startActivity(intent);
+                            finish(); // close this activity
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 }
