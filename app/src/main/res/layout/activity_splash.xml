@@ -31,7 +31,7 @@
         android:textStyle="normal|bold"
         android:textColor="@android:color/primary_text_light"
         android:textIsSelectable="true"
-        android:textSize="40dp"
+        android:textSize="40sp"
         android:textAlignment="center"
         android:singleLine="false"
         android:layout_marginTop="15dp" />

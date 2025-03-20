@@ -282,5 +282,3 @@ public class MainActivity extends AppCompatActivity {
 //        System.exit(0);
     }
 }
-
-
