@@ -23,7 +23,7 @@ public class RebootSystem extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reboot_system);
 
-        final Button rebootButton = (Button) findViewById(R.id.reboot_button);
+        final Button rebootButton = findViewById(R.id.reboot_button);
 
         if (rebootButton != null) {
             rebootButton.setOnClickListener(new View.OnClickListener() {
@@ -41,7 +41,7 @@ public class RebootSystem extends AppCompatActivity {
         JSONObject data = connection.retrieveData(commandString);
         try {
             String result = data.getString("status");
-            String message = "";
+            String message;
             if(result.equals("success")) {
                 message = "System Rebooted.";
             } else {
@@ -70,5 +70,3 @@ public class RebootSystem extends AppCompatActivity {
     }
 
 }
-
-

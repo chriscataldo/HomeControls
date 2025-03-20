@@ -23,7 +23,7 @@ public class SetAwayStatus extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.set_away_status);
-        ToggleButton switchSetting = (ToggleButton) findViewById(R.id.away_status);
+        ToggleButton switchSetting = findViewById(R.id.away_status);
 
         switchSetting.setText("Home");
         switchSetting.setTextOff("Home");
@@ -52,7 +52,7 @@ public class SetAwayStatus extends AppCompatActivity {
         JSONObject data = connection.retrieveData(commandString);
         try {
             String result = data.getString("status");
-            String message = "";
+            String message;
             if(result.equals("success")) {
                 message = "Away Status Changed.";
             } else {
@@ -92,6 +92,5 @@ public class SetAwayStatus extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }
-
 
 }

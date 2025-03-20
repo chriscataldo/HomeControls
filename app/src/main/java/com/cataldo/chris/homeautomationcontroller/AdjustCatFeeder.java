@@ -31,19 +31,18 @@ public class AdjustCatFeeder extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.adjust_cat_feeder);
 
-        final TextView currentDurationValue = (TextView) findViewById(R.id.current_value);
-        final Button setDurationButton = (Button) findViewById(R.id.set_new_duration);
+        final TextView currentDurationValue = findViewById(R.id.current_value);
+        final Button setDurationButton = findViewById(R.id.set_new_duration);
 
         feederDuration feederStats = getCatFeederDuration();
         currentDurationValue.setText(feederStats.feedercurrent);
 
-        durationControl = (SeekBar) findViewById(R.id.duration_bar);
+        durationControl = findViewById(R.id.duration_bar);
         final int intMin = Integer.parseInt(feederStats.feedermin);
         int intMax = Integer.parseInt(feederStats.feedermax);
         int spread = intMax - intMin;
         durationControl.setMax(spread);
         durationControl.setProgress(Integer.parseInt(feederStats.feedercurrent) - intMin);
-
         durationControl.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
@@ -61,14 +60,8 @@ public class AdjustCatFeeder extends AppCompatActivity {
             }
         });
 
-
         if (setDurationButton != null) {
-            setDurationButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    setNewDuration((String) currentDurationValue.getText());
-                }
-            });
+            setDurationButton.setOnClickListener(v -> setNewDuration((String) currentDurationValue.getText()));
         }
     }
 
@@ -78,7 +71,7 @@ public class AdjustCatFeeder extends AppCompatActivity {
         JSONObject data = connection.retrieveData(commandString);
         try {
             String result = data.getString("status");
-            String message = "";
+            String message;
             if(result.equals("success")) {
                 message = "Duration Changed.";
             } else {
@@ -94,7 +87,7 @@ public class AdjustCatFeeder extends AppCompatActivity {
     }
 
     private feederDuration getCatFeederDuration() {
-        feederDuration feeder = null;
+        feederDuration feeder;
         feeder = new feederDuration();
         String commandString = "&command=getfeederduration";
         ApiConnection connection = new ApiConnection(this);

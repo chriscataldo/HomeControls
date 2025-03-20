@@ -21,8 +21,6 @@ import com.koushikdutta.ion.Ion;
 
 public class SplashScreen extends Activity {
 
-    private String JSONData;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +59,7 @@ public class SplashScreen extends Activity {
                     } else {
                         Toast.makeText(
                             SplashScreen.this,
-                            "Connection Error - " + e.toString(),
+                            "Connection Error - " + e,
                         Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(SplashScreen.this, EditSettings.class);
                         startActivity(intent);

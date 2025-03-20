@@ -22,7 +22,7 @@ public class RestartAutomation extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.restart_automation);
 
-        final Button restartButton = (Button) findViewById(R.id.restart_button);
+        final Button restartButton = findViewById(R.id.restart_button);
 
         if (restartButton != null) {
             restartButton.setOnClickListener(new View.OnClickListener() {
@@ -40,7 +40,7 @@ public class RestartAutomation extends AppCompatActivity {
         JSONObject data = connection.retrieveData(commandString);
         try {
             String result = data.getString("status");
-            String message = "";
+            String message;
             if(result.equals("success")) {
                 message = "Automation Restarted.";
             } else {

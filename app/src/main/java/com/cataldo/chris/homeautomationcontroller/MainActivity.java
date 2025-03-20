@@ -19,16 +19,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 
 
-
 public class MainActivity extends AppCompatActivity {
-
-    private ListView listView;
-    private final Boolean isActivityRestarting = false;
-    private final Boolean reloadDataOnResume = false;
     private GlobalVars mApp;
    // private SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
     private Long intitialStartTime;
@@ -41,13 +35,6 @@ public class MainActivity extends AppCompatActivity {
         Log.v("DATA", "in onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        try {
-//            mApp = ((GlobalVars) getApplicationContext());
-//        } catch(Exception e) {
-//            Toast toast = Toast.makeText(this, "onCreate mApp error: " + e.toString(), Toast.LENGTH_LONG);
-//            toast.show();
-//            restartApp();
-//        }
 
         try {
             if(savedInstanceState != null) {
@@ -68,14 +55,14 @@ public class MainActivity extends AppCompatActivity {
                 jsonDataString = intent.getStringExtra("jsonDataString");
             }
         } catch(Exception e) {
-            Toast toast = Toast.makeText(this, "onCreate mApp error: " + e.toString(), Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(this, "onCreate mApp error: " + e, Toast.LENGTH_LONG);
             toast.show();
             restartApp();
         }
 
         if(jsonDataString != null) {
             Log.v("DATA", "in jsonDataString != null");
-            ArrayList<Device> devices = new ArrayList<Device>();
+            ArrayList<Device> devices = new ArrayList<>();
             try {
                 JSONObject jsonData = new JSONObject(jsonDataString);
                 JSONObject resultObject = jsonData.getJSONObject("Data");
@@ -105,20 +92,13 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // sort the devices
-            Collections.sort(devices, new DeviceComparator());
+            devices.sort(new DeviceComparator());
 
-            // testing
-    //        for (Device data : devices) {
-    //            Log.v("Data","device:" + data.getDevice());
-    //            Log.v("Data","name:" + data.getDeviceName());
-    //             Log.v("Data","type:" + data.getDeviceType());
-    //            Log.v("Data","status:" + data.getDeviceStatus());
-    //        }
             try {
                 // Create the adapter to convert the array to views
                 DevicesAdapter adapter = new DevicesAdapter(this, devices);
                 // Attach the adapter to a ListView
-                ListView listView = (ListView) findViewById(R.id.mainListView);
+                ListView listView = findViewById(R.id.mainListView);
                 listView.setAdapter(adapter);
             } catch (Exception e) {
                 Toast toast = Toast.makeText(this, "adapter error: " + e, Toast.LENGTH_SHORT);
@@ -153,27 +133,20 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         Log.v("DATA", "in onResume");
         super.onResume();
-        //toast = Toast.makeText(this, "App is resuming", Toast.LENGTH_SHORT);
-        //toast.show();
         Long timeNow = System.currentTimeMillis();
 
         try {
             int elapsedTime = (int) (timeNow - intitialStartTime)/1000;
-//        String message = elapsedTime + "";
-//        toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
-//        toast.show();
             if (elapsedTime > refreshTimeLimit) {
                 Log.v("DATA", "in onResume try");
                 restartApp();
             }
         } catch(Exception e) {
             Log.v("DATA", "in onResume catch");
-            toast = Toast.makeText(this, "onResume Error: " + e.toString(), Toast.LENGTH_SHORT);
+            toast = Toast.makeText(this, "onResume Error: " + e, Toast.LENGTH_SHORT);
             toast.show();
             restartApp();
         }
-
-
     }
 
     @Override
@@ -188,9 +161,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-//            case R.id.adjust_cat_feeder:
-//                adjustCatFeeder();
-//                return true;
             case R.id.set_away_status:
                 setAwayStatus();
                 return true;
@@ -211,14 +181,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-//    public void adjustCatFeeder() {
-//        Intent intent = new Intent(this, AdjustCatFeeder.class);
-//        startActivity(intent);
-//    }
-
     public void setAwayStatus() {
         Intent intent = new Intent(this, SetAwayStatus.class);
         startActivity(intent);
@@ -238,11 +200,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, About.class);
         startActivity(intent);
     }
-
-//    public void restartX10() {
-//        Intent intent = new Intent(this, RestartAutomation.class);
-//        startActivity(intent);
-//    }
 
     public void rebootSystem() {
         Intent intent = new Intent(this, RebootSystem.class);
@@ -272,13 +229,5 @@ public class MainActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-
-
-//        Intent intent = new Intent(getApplicationContext(), SplashScreen.class);
-//        int mPendingIntentId = 9999;
-//        PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-//        AlarmManager mgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-//        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-//        System.exit(0);
     }
 }

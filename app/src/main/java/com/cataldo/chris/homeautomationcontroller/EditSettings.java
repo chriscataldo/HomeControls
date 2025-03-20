@@ -21,19 +21,19 @@ public class EditSettings extends AppCompatActivity {
         String currentAuthcode = preferences.getString("authcode", null);
 
         if(!TextUtils.isEmpty(currentDomain)) {
-            EditText domainField = (EditText) findViewById(R.id.domain);
+            EditText domainField = findViewById(R.id.domain);
             domainField.setText(currentDomain);
         }
 
         if(!TextUtils.isEmpty(currentAuthcode)) {
-            EditText authcodeField = (EditText) findViewById(R.id.authcode);
+            EditText authcodeField = findViewById(R.id.authcode);
             authcodeField.setText(currentAuthcode);
         }
     }
 
     public void saveSettings(View view) {
-        EditText domainField = (EditText) findViewById(R.id.domain);
-        EditText authcodeField = (EditText) findViewById(R.id.authcode);
+        EditText domainField = findViewById(R.id.domain);
+        EditText authcodeField = findViewById(R.id.authcode);
         String newDomain = domainField.getText().toString();
         String newAuthcode = authcodeField.getText().toString();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -46,6 +46,5 @@ public class EditSettings extends AppCompatActivity {
         startActivity(newIntent);
         finish();
     }
-
 
 }

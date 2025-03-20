@@ -41,7 +41,7 @@
             android:textSize="16sp"
             android:layout_alignParentEnd="true"
             android:padding="5dp"
-            android:gravity="right" />
+            android:gravity="end" />
     </RelativeLayout>
 </LinearLayout>
 

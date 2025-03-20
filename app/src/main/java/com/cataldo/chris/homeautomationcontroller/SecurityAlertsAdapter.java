@@ -34,8 +34,8 @@ public class SecurityAlertsAdapter extends ArrayAdapter<SecurityAlert> {
     @Override
     public View getView(final int position, View view, ViewGroup parent) {
 
-        View vi = view;             //trying to reuse a recycled view
-        ViewHolder holder = null;
+        View vi = view;             // trying to reuse a recycled view
+        ViewHolder holder;
 
         if (vi == null) {
             //The view is not a recycled one: we have to inflate
@@ -43,10 +43,10 @@ public class SecurityAlertsAdapter extends ArrayAdapter<SecurityAlert> {
             vi = inflater.inflate(R.layout.alert_row, parent, false);
             holder = new ViewHolder();
 
-            holder.headerText = (TextView) vi.findViewById(R.id.txtHeader);
-            holder.zone = (TextView) vi.findViewById(R.id.zone);
-            holder.action = (TextView) vi.findViewById(R.id.action);
-            holder.time = (TextView) vi.findViewById(R.id.time);
+            holder.headerText = vi.findViewById(R.id.txtHeader);
+            holder.zone = vi.findViewById(R.id.zone);
+            holder.action = vi.findViewById(R.id.action);
+            holder.time = vi.findViewById(R.id.time);
 
             vi.setTag(holder);
         } else {
@@ -58,8 +58,7 @@ public class SecurityAlertsAdapter extends ArrayAdapter<SecurityAlert> {
 
         // Get the data item for this position
         final SecurityAlert alert = getItem(position);
-        boolean containsHeader = false;
-        if(position == 0) containsHeader = true;
+        boolean containsHeader = position == 0;
         if(position > 0) {
             SecurityAlert alertLast = getItem(position-1);
             if(!alert.date.equals(alertLast.date)) {
@@ -98,7 +97,6 @@ public class SecurityAlertsAdapter extends ArrayAdapter<SecurityAlert> {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
 
         return vi;
     }

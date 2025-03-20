@@ -15,7 +15,7 @@ import org.json.JSONObject;
  */
 
 public class ApiConnection {
-    private Context context;
+    private final Context context;
     ApiConnection(Context context){
         this.context=context;
     }
@@ -31,10 +31,9 @@ public class ApiConnection {
                 try {
                     JSONObject jsonData = new JSONObject(jsonString);
                     String statusError = jsonData.getString("Error");
-                    if (statusError.length() > 0) {
+                    if (!statusError.isEmpty()) {
                         showErrorAlert(statusError);
                     } else {
-                        JSONObject resultObject = jsonData.getJSONObject("Data");
                         return jsonData.getJSONObject("Data");
                     }
                 } catch (JSONException e) {

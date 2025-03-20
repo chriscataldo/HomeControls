@@ -19,7 +19,6 @@ import java.util.Collections;
  * Created by Chris on 4/24/2016.
  */
 public class ViewSecurityLog extends AppCompatActivity {
-    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +28,7 @@ public class ViewSecurityLog extends AppCompatActivity {
         String commandString = "&command=getsecurityalerts";
         ApiConnection connection = new ApiConnection(this);
         JSONObject data = connection.retrieveData(commandString);
-        ArrayList<SecurityAlert> securityAlerts = new ArrayList<SecurityAlert>();
+        ArrayList<SecurityAlert> securityAlerts = new ArrayList<>();
         try {
             JSONArray resultArray = data.getJSONArray("securityalerts");
             for (int i = 0; i < resultArray.length(); i++) {
@@ -54,20 +53,12 @@ public class ViewSecurityLog extends AppCompatActivity {
         }
 
         // sort the data
-        Collections.sort(securityAlerts, new SecurityAlertComparator());
-
-        // testing
-        //        for (SecurityAlert data : alerts) {
-        //            Log.v("Data","zone:" + data.getZone());
-        //            Log.v("Data","action:" + data.getAction());
-        //            Log.v("Data","date:" + data.getDate());
-        //            Log.v("Data","time:" + data.getTime());
-        //        }
+        securityAlerts.sort(new SecurityAlertComparator());
 
         // Create the adapter to convert the array to views
         SecurityAlertsAdapter adapter = new SecurityAlertsAdapter(this, securityAlerts);
         // Attach the adapter to a ListView
-        ListView listView = (ListView) findViewById(R.id.alertsListView);
+        ListView listView = findViewById(R.id.alertsListView);
         listView.setAdapter(adapter);
     }
 
@@ -85,6 +76,3 @@ public class ViewSecurityLog extends AppCompatActivity {
     }
 
 }
-
-
-

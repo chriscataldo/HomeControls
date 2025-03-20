@@ -54,10 +54,4 @@ public class GlobalVars extends Application {
         connectionError = str;
     }
 
-//    @Override
-//    public void onCreate() {
-//        super.onCreate();
-//    }
-
-
 }
