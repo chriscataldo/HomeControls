@@ -1,7 +1,6 @@
 package com.cataldo.chris.homeautomationcontroller;
 
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<Device> devices = new ArrayList<>();
             try {
                 JSONObject jsonData = new JSONObject(jsonDataString);
-//                JSONObject resultObject = jsonData.getJSONObject("Data");
-
                 Iterator<String> iter = jsonData.keys();
                 while (iter.hasNext()) {
                     String key = iter.next();
@@ -112,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
             String connectionError = mApp.getConnectionError();
             showErrorAlert(connectionError);
         }
-
     }
 
     @Override
@@ -211,11 +207,7 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.setTitle("Connection Error");
         alertDialog.setMessage(errorMessage);
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                (dialog, which) -> dialog.dismiss());
         alertDialog.show();
     }
 

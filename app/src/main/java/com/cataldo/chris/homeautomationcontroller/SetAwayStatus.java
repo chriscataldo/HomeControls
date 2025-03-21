@@ -114,11 +114,9 @@ public class SetAwayStatus extends AppCompatActivity {
                     connection.showErrorAlert("Invalid Json Response");
                 }
 
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Log.v("DBG", "in onPostExecute");
-                        setupView();
-                    }
+                runOnUiThread(() -> {
+                    Log.v("DBG", "in onPostExecute");
+                    setupView();
                 });
             }
         }).start();

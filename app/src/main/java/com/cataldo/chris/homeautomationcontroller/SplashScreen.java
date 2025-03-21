@@ -78,7 +78,6 @@ public class SplashScreen extends Activity {
 
     private void getInitialData(ApiConnection connection, String commandString) {
         new Thread(new Runnable() {
-            String message;
             JSONObject data;
 
             Exception error;
@@ -91,19 +90,17 @@ public class SplashScreen extends Activity {
                     error = e;
                 }
 
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        if(error != null) {
-                            Toast.makeText(SplashScreen.this,"Connection Error - " + error, Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(SplashScreen.this, EditSettings.class);
-                            startActivity(intent);
-                            finish(); // close this activity
-                        } else {
-                            Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-                            intent.putExtra("jsonDataString", data.toString());
-                            startActivity(intent);
-                            finish(); // close this activity
-                        }
+                runOnUiThread(() -> {
+                    if(error != null) {
+                        Toast.makeText(SplashScreen.this,"Connection Error - " + error, Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(SplashScreen.this, EditSettings.class);
+                        startActivity(intent);
+                        finish(); // close this activity
+                    } else {
+                        Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                        intent.putExtra("jsonDataString", data.toString());
+                        startActivity(intent);
+                        finish(); // close this activity
                     }
                 });
             }

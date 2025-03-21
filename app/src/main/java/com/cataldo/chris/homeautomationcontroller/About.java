@@ -13,11 +13,9 @@ public class About extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.about_app);
 
-
         TextView textView = findViewById(R.id.textView);
         String versionName = "Version " + BuildConfig.VERSION_NAME;
         textView.setText(versionName);
-
     }
 
     @Override

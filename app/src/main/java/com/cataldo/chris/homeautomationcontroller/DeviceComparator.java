@@ -15,4 +15,3 @@ public class DeviceComparator implements Comparator<Device> {
         return value1;
     }
 }
-
