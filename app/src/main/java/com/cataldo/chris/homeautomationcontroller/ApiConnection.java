@@ -1,9 +1,10 @@
 package com.cataldo.chris.homeautomationcontroller;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
-
-import androidx.appcompat.app.AlertDialog;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,7 +23,7 @@ public class ApiConnection {
         this.context=context;
     }
 
-    JSONObject retrieveData(String commandString) {
+   public JSONObject retrieveData(String commandString) {
         JSONObject data = new JSONObject();
         GlobalVars mApp = ((GlobalVars) context.getApplicationContext());
         String dataUrl = "http://" + mApp.getDomain() + mApp.getHomeControlUrl() + "?AUTHCODE=" + mApp.getAuthCode() + commandString;
@@ -30,25 +31,23 @@ public class ApiConnection {
             Log.v("DBG", "in try");
             String jsonString = fetchDataFromUrl(dataUrl);
             Log.v("DBG", "jsonString: " + jsonString);
-            Log.v("DBG", jsonString);
-            try {
-                JSONObject jsonData = new JSONObject(jsonString);
-                String statusError = jsonData.getString("Error");
-                if (!statusError.isEmpty()) {
-                    showErrorAlert(statusError);
-                } else {
-                    return jsonData.getJSONObject("Data");
-                }
-            } catch (JSONException e) {
-                Log.v("DBG", "error: " + e);
-                showErrorAlert("Invalid Json Response");
+
+            JSONObject jsonData = new JSONObject(jsonString);
+            String statusError = jsonData.getString("Error");
+            if (!statusError.isEmpty()) {
+                showErrorAlert(statusError);
+            } else {
+                return jsonData.getJSONObject("Data");
             }
+        } catch (JSONException e) {
+            Log.v("DBG", "error: " + e);
+            showErrorAlert("Invalid Json Response");
         } catch(Exception e) {
             Log.v("DBG", "error: " + e);
             showErrorAlert("Connection Error");
         }
 
-        return data;
+        return null;
     }
 
     private static String fetchDataFromUrl(String urlString) throws Exception {
@@ -69,11 +68,21 @@ public class ApiConnection {
     }
 
     void showErrorAlert(String errorMessage) {
-        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-        alertDialog.setTitle("Connection Error");
-        alertDialog.setMessage(errorMessage);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                (dialog, which) -> dialog.dismiss());
-        alertDialog.show();
+//        ContextCompat.getMainExecutor(context).execute(() -> {
+//            AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+//            alertDialog.setTitle("Connection Error");
+//            alertDialog.setMessage(errorMessage);
+//            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+//                    (dialog, which) -> dialog.dismiss());
+//            alertDialog.show();
+//        });
+
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

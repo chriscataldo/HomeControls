@@ -9,6 +9,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -97,10 +99,12 @@ public class SplashScreen extends Activity {
                         startActivity(intent);
                         finish(); // close this activity
                     } else {
-                        Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-                        intent.putExtra("jsonDataString", data.toString());
-                        startActivity(intent);
-                        finish(); // close this activity
+                        if(data != null) {
+                            Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                            intent.putExtra("jsonDataString", data.toString());
+                            startActivity(intent);
+                            finish(); // close this activity
+                        }
                     }
                 });
             }

@@ -102,23 +102,20 @@ public class SetAwayStatus extends AppCompatActivity {
     }
 
     private void getAwayStatus(ApiConnection connection) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String commandString = "&command=getawaystatus";
-                JSONObject data = connection.retrieveData(commandString);
-                try {
-                    currentAwayStatus = data.getInt("awaycurrent");
-                    Log.v("DBG", "currentAwayStatus: " + currentAwayStatus);
-                } catch (JSONException e) {
-                    connection.showErrorAlert("Invalid Json Response");
-                }
-
-                runOnUiThread(() -> {
-                    Log.v("DBG", "in onPostExecute");
-                    setupView();
-                });
+        new Thread(() -> {
+            String commandString = "&command=getawaystatus";
+            JSONObject data = connection.retrieveData(commandString);
+            try {
+                currentAwayStatus = data.getInt("awaycurrent");
+                Log.v("DBG", "currentAwayStatus: " + currentAwayStatus);
+            } catch (JSONException e) {
+                connection.showErrorAlert("Invalid Json Response");
             }
+
+            runOnUiThread(() -> {
+                Log.v("DBG", "in onPostExecute");
+                setupView();
+            });
         }).start();
     }
 
@@ -141,13 +138,11 @@ public class SetAwayStatus extends AppCompatActivity {
                     connection.showErrorAlert("Invalid Json Response");
                 }
 
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Log.v("DBG", "in onPostExecute");
-                        Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                        toast.show();
-                    }
+                runOnUiThread(() -> {
+                    Log.v("DBG", "in onPostExecute");
+                    Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.show();
                 });
             }
         }).start();
